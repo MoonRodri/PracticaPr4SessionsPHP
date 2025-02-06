@@ -1,4 +1,9 @@
+<?php 
 
+
+
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,5 +14,8 @@
 </head>
 <body>
     <h1>Modify array saved in session</h1>
+    <h1></h1>
+
+    
 </body>
 </html>
