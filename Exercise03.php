@@ -1,3 +1,63 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['list'])) {
+    $_SESSION['list'] = [];
+}
+
+$error = $message = $name = $quantity = $price = "";
+$index = -1;
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['add'])) {
+        $name = $_POST['name'];
+        $quantity = $_POST['quantity'];
+        $price = $_POST['price'];
+
+        if (empty($name) || empty($quantity) || empty($price)) {
+            $error = "All fields are required.";
+        } else {
+            $_SESSION['list'][] = ['name' => $name, 'quantity' => $quantity, 'price' => $price];
+            $message = "Item added properly.";
+        }
+    }
+
+    if (isset($_POST['edit'])) {
+        $index = $_POST['index'];
+        $name = $_POST['name'];
+        $quantity = $_POST['quantity'];
+        $price = $_POST['price'];
+    }
+
+    if (isset($_POST['update'])) {
+        $index = $_POST['index'];
+        $name = $_POST['name'];
+        $quantity = $_POST['quantity'];
+        $price = $_POST['price'];
+
+        if (empty($name) || empty($quantity) || empty($price)) {
+            $error = "All fields are required.";
+        } else {
+            $_SESSION['list'][$index] = ['name' => $name, 'quantity' => $quantity, 'price' => $price];
+            $message = "Item updated successfully.";
+        }
+    }
+
+    if (isset($_POST['delete'])) {
+        $index = $_POST['index'];
+        array_splice($_SESSION['list'], $index, 1);
+        $message = "Item deleted properly.";
+    }
+
+    if (isset($_POST['total'])) {
+        $totalValue = 0;
+        foreach ($_SESSION['list'] as $item) {
+            $totalValue += $item['quantity'] * $item['price'];
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -25,13 +85,13 @@
 <body>
     <h1>Shopping list</h1>
     <form method="post">
-        <label for="name">name:</label>
+        <label for="name">Name:</label>
         <input type="text" name="name" id="name" value="<?php echo $name; ?>">
         <br>
-        <label for="quantity">quantity:</label>
+        <label for="quantity">Quantity:</label>
         <input type="number" name="quantity" id="quantity" value="<?php echo $quantity; ?>">
         <br>
-        <label for="price">price:</label>
+        <label for="price">Price:</label>
         <input type="number" name="price" id="price" value="<?php echo $price; ?>">
         <br>
         <input type="hidden" name="index" value="<?php echo $index; ?>">
@@ -44,11 +104,11 @@
     <table>
         <thead>
             <tr>
-                <th>name</th>
-                <th>quantity</th>
-                <th>price</th>
-                <th>cost</th>
-                <th>actions</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Cost</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -72,7 +132,7 @@
             <?php } ?>
             <tr>
                 <td colspan="3" align="right"><strong>Total:</strong></td>
-                <td><?php echo $totalValue; ?></td>
+                <td><?php echo isset($totalValue) ? $totalValue : ''; ?></td>
                 <td>
                     <form method="post">
                         <input type="submit" name="total" value="Calculate total">
@@ -82,3 +142,5 @@
         </tbody>
     </table>
 </body>
+
+</html>
